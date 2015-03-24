@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Docker for Ruby applications</title>
+
+		<meta name="description" content="Docker can be quite useful when used for Ruby apps">
+		<meta name="author" content="Maciej Mensfeld">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Docker for Ruby applications</h2>
+					<img src="img/docker.png" style="background: none; border: none; box-shadow: 0 0 0 0 #fff;"/>
+					<p>
+						<small>
+							<a href="http://mensfeld.pl">Maciej Mensfeld</a> /
+							<a href="http://twitter.com/maciejmensfeld">@maciejmensfeld</a> /
+							<a href="http://mensfeld.pl">mensfeld.pl</a>
+						</small>
+					</p>
+				</section>
+
+				<section>
+					<h3>Let's talk about cargo shipping!</h3>
+
+					<img src="img/cargo-fail.jpeg"/>
+				</section>
+
+				<section>
+					<h3>Let's talk about cargo shipping!</h3>
+
+					<ul>
+						<li>Goods shouldn't worry about cargo</li>
+						<li class="fragment">Destination shouldn't matter (from goods perspective)</li>
+						<li class="fragment">Multiple goods types</li>
+						<li class="fragment">Goods should not interact</li>
+						<li class="fragment">The whole process should be transparent for them</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Goods can be packed into containers!</h3>
+					<h4>Software can be packed into Docker containers!</h4>
+
+					<img src="img/docker-container.png"/>
+				</section>
+
+				<section>
+					<h3>Let's talk about Docker!</h3>
+
+					<img src="img/docker-logo.png"/>
+				</section>
+
+				<section>
+					<h3>What is Docker?</h3>
+
+					<blockquote>
+						Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications.
+					</blockquote>
+
+					<blockquote>
+							Thanks to Docker, IT can ship faster and run the same app, unchanged, on laptops, data center VMs, and any cloud.
+					</blockquote>
+				</section>
+
+				<section>
+					<h3>What Docker brings to the table?</h3>
+
+					<ul>
+						<li class="fragment">Containers in layers (storing diffs only)</li>
+						<li class="fragment">Reusable layers (across images)</li>
+						<li class="fragment">Using images filesystems (chroot)</li>
+						<li class="fragment">Separate process space</li>
+						<li class="fragment">Specific network interface</li>
+						<li class="fragment">Support for ephemeral containers</li>
+						<li class="fragment">Public and free Docker registry (repository)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Docker is not a next VMware</h3>
+
+					<ul>
+						<li class="fragment">Processes run by Docker share the host kernel</li>
+						<li class="fragment">No devise emulation</li>
+						<li class="fragment">Architectures and platforms between host and container must match</li>
+						<li class="fragment">Since we need only a valid kerner (>= 3.8), Distro doesn't matter</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Let's talk about building images!</h3>
+
+					<pre><code data-trim>
+FROM ruby:2.2.1-onbuild
+
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+ONBUILD COPY Gemfile /usr/src/app/
+ONBUILD COPY Gemfile.lock /usr/src/app/
+ONBUILD RUN bundle install
+ONBUILD COPY . /usr/src/app
+					</code></pre>
+
+					<pre><code data-trim>
+					docker build -t "app_name:tags" ./path
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Let's talk about Ruby apps images!</h3>
+
+					<ul>
+						<li>Ain't so easy :-(</li>
+						<li>Apps are not single process based anymore</li>
+						<li>It is a bit more complex for bigger apps</li>
+						<li>Doesn't work with private git repositories</li>
+						<li>Doesn't work with private gems</li>
+						<li>Doesn't work without exposing a SSH key</li>
+						<li>Too much caching</li>
+						<li>Bundler is a pain in the ass</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>But why?</h2>
+
+					<p class="fragment">Most of the troubles comes from how Docker build works</p>
+					<p class="fragment">Almost everything can be fixed or bypassed</p>
+				</section>
+
+				<section>
+					<h2>Bigger apps - more images</h2>
+
+					<ul style="font-size: 70%;">
+						<li>Multi process images are not scalable</li>
+						<li>Who needs to scale crontab? ;)</li>
+						<li>There's no strict rule on how many Pumas, Sidekiqs, etc, will we need</li>
+						<li>Single process images can be used to scale in any direction</li>
+					</ul>
+
+					<img src="img/shitty.jpg" />
+				</section>
+
+				<section>
+					<h3>Decompose!</h3>
+
+					<img src="img/scale.png" />
+				</section>
+
+				<section>
+					<h3>Multiple images mean multiple Dockerfiles</h3>
+
+					<p>
+					Instead of playing with Docker let's fix that in Ruby - simple templates and a bit of magic:
+					</p>
+					<pre><code data-trim>
+
+name = "#{@app.container_name(:base)}:#{@app.build_tag}"
+generator.build(:base)
+system "docker build -t='#{name}' #{@app.location}"
+
+@app.services.each do |type, enabled|
+  next unless enabled
+
+  generator.build(type)
+
+  name = "#{@app.container_name(type)}:#{@app.build_tag}"
+
+  system "docker build -t='#{name}' #{@app.location}"
+  system "docker tag #{name} #{@app.container_name(type)}:latest"
+end
+     		</code></pre>
+				</section>
+
+				<section>
+					<h3>Multiple images mean multiple Dockerfiles</h3>
+
+					<pre><code data-trim>
+# docker images | grep facebook
+registry/facebook_api_production_base      latest
+registry/facebook_api_production_mongoid   latest
+registry/facebook_api_production_puma      latest
+registry/facebook_api_production_sidekiq   latest
+registry/facebook_api_production_whenever  latest
+
+     			</code></pre>
+
+     			<p>
+     			Dynamically generated templates will allow you to invalidate cache
+     			whenever you want (too much caching issue solved).
+     			</p>
+				</section>
+
+				<section>
+					<h3>Private Git stuff (apps and gems)</h3>
+
+					<div>
+						<ul>
+							<li style="font-size: 70%;">No easy way to injest your stuff to /etc/hosts</li>
+							<li style="font-size: 70%;">Docker will cache your SSH key</li>
+							<li style="font-size: 70%;">If it is cached it will be pushed</li>
+							<li style="font-size: 70%;">If it was pushed it will be in the image</li>
+							<li style="font-size: 70%;">If it is in the image it will be in the container</li>
+							<li style="font-size: 70%;">If it is in the container someone might get it</li>
+						</ul>
+					</div>
+					<img src="img/cart.jpg" />
+				</section>
+
+				<section>
+					<h3>Private Git stuff (apps and gems)</h3>
+
+					<p>
+						Just use temporary SSH key that works only during container build.
+					</p>
+
+					<p>
+					Details: <a href="http://dev.mensfeld.pl/2015/02/gitlab-ruby-private-repository-docker-container-and-safe-way-to-add-ssh-key-for-build-process-only/">http://dev.mensfeld.pl/?p=3153</a>
+					</p>
+
+					<img src="img/ssh.jpg" />
+				</section>
+
+				<section>
+					<h3>Fat bundler issue</h3>
+
+					<ul>
+						<li>Private gems require SSH key which invalidates cache</li>
+						<li>Security vs build performance</li>
+						<li>Local gem cache server as one of the solution (in development)</li>
+						<li>Base image with system wide most used gems to speed up bundle install</li>
+					</ul>
+
+					<img src="img/bundler.jpg" />
+
+				</section>
+
+				<section>
+					<h1>THE END - Q &amp; A</h1>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
