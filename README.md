@@ -1,3 +1,3 @@
-# Monitoring Ruby applications with Heka and Grafana
+# Docker for Ruby applications
 
 Git clone and open index.html
