@@ -167,7 +167,7 @@ ONBUILD COPY . /usr/src/app
 
 					<ul style="font-size: 70%;">
 						<li>Multi process images are not scalable</li>
-						<li>Who needs to scale crontab? ;)</li>
+						<li>Who needs to scale crontab? ;) (cronos)</li>
 						<li>There's no strict rule on how many Pumas, Sidekiqs, etc, will we need</li>
 						<li>Single process images can be used to scale in any direction</li>
 					</ul>
@@ -267,6 +267,45 @@ registry/facebook_api_production_whenever  latest
 
 					<img src="img/bundler.jpg" />
 
+				</section>
+
+
+				<section>
+					<h2>Multiple apps - multiple settings</h2>
+
+					<p>
+						What about all the settings for all of the apps?
+					</p>
+
+					<li class="fragment">Different applications</li>
+					<li class="fragment">Different environments</li>
+					<li class="fragment">Different configurations</li>
+					<li class="fragment">Apps don't always work in the same way</li>
+					<li class="fragment">Settings tend to differ and change</li>
+					<li class="fragment">Developers should be able update settings</li>
+				</section>
+
+				<section>
+					<h2>Settings repository</h2>
+
+					<ul>
+					<li class="fragment">Changes can be reviewed</li>
+					<li class="fragment">All the config stuff in one place</li>
+					<li class="fragment">Automatically fetched during builds</li>
+					<li class="fragment">Multiple environments</li>
+					<li class="fragment">Can be used to apply specific container settings</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>How to host it?</h2>
+
+					<ul>
+						<li class="fragment">Amazon Web Storage (AWS)</li>
+						<li class="fragment">CoreOS</li>
+						<li class="fragment">Fleet</li>
+						<li class="fragment">Panamax</li>
+					</ul>
 				</section>
 
 				<section>
