@@ -99,18 +99,17 @@
 					<h3>What Docker brings to the table?</h3>
 
 					<ul>
-						<li class="fragment">Containers in layers (storing diffs only)</li>
-						<li class="fragment">Reusable layers (across images)</li>
-						<li class="fragment">Using images filesystems (chroot)</li>
-						<li class="fragment">Separate process space</li>
-						<li class="fragment">Specific network interface</li>
-						<li class="fragment">Support for ephemeral containers</li>
-						<li class="fragment">Public and free Docker registry (repository)</li>
+						<li class="fragment">Reusable layers (union mount)</li>
+						<li class="fragment">Great portability</li>
+						<li class="fragment">No more dependency hell</li>
+						<li class="fragment">Separate process namespace</li>
+						<li class="fragment">Flexible but not ideal network solution</li>
+						<li class="fragment">Public and free Docker registry with various base images</li>
 					</ul>
 				</section>
 
 				<section>
-					<h3>Docker is not a next VMware</h3>
+					<h3>Conteiner != Virtual Machine</h3>
 
 					<ul>
 						<li class="fragment">Processes run by Docker share the host kernel</li>
@@ -124,7 +123,7 @@
 					<h3>Let's talk about building images!</h3>
 
 					<pre><code data-trim>
-FROM ruby:2.2.1-onbuild
+FROM ruby:2.2.1
 
 RUN mkdir -p /usr/src/app
 
