@@ -1,3 +1,3 @@
 # Docker for Ruby applications
 
-Git clone and open index.html
+Open [http://mensfeld.github.io/docker-for-ruby-apps](http://mensfeld.github.io/docker-for-ruby-apps)
